@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:RuntasticViewer"
+             xmlns:googleMaps="clr-namespace:Xamarin.Forms.GoogleMaps;assembly=Xamarin.Forms.GoogleMaps"
+             x:Class="RuntasticViewer.MainPage">
+
+    <StackLayout>
+        <!-- Place new controls here -->
+        <googleMaps:Map
+            x:Name="Map"
+
+            InitialCameraUpdate="42, 13, 13, 30, 60"
+            HorizontalOptions="Fill"
+            VerticalOptions="FillAndExpand" />
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="End">
+            <Label
+                x:Name="Info"
+                Text="Default Runtastic Trace loaded!"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="Center" />
+            <Button x:Name="Fly"
+                    Text="Fly to trace"
+                    HorizontalOptions="CenterAndExpand"
+                    VerticalOptions="Center"></Button>
+        </StackLayout>
+
+    </StackLayout>
+
+</ContentPage>
