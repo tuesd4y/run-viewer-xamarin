@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,11 @@ namespace RuntasticViewer
     {
         private Extent _extent = new Extent(0, 0, 0, 0);
         private Position _center = new Position();
+        private RuntasticTrace _trace = null;
+        private Polyline _poly = new Polyline();
+
+        private int _start = -1;
+        private int _end = -1;
 
         public MainPage()
         {
@@ -31,25 +37,71 @@ namespace RuntasticViewer
             {
                 var content = sr.ReadToEnd();
                 var trace = JsonConvert.DeserializeObject<RuntasticTrace>(content);
-                var poly = TraceToPolyline(trace);
-                Map.Polylines.Add(poly);
+                _poly = TraceToPolyline(trace);
+                Map.Polylines.Add(_poly);
 
-                _extent = FindPolylineExtent(poly);
+                _extent = FindPolylineExtent(_poly);
                 _center = new Position(
                     (_extent.minLat + _extent.maxLat) / 2,
                     (_extent.minLng + _extent.maxLng) / 2
                 );
 
-                poly.Clicked += (sender, args) => { Console.WriteLine("Clicked poly"); };
-
                 // we need to move to the map asynchronously since it doesn't work if we do it right when the map is loaded
-                var timer = new System.Timers.Timer(.1);
+                var timer = new System.Timers.Timer(.5);
                 timer.Elapsed += (sender, args) =>
+                {
                     Map.MoveToRegion(new MapSpan(_center, _extent.width, _extent.height));
+                    // we only need to do this once, so we can stop the timer after we executed it one time
+                    timer.Stop();
+                };
                 timer.Start();
             }
 
+
+            Map.MapClicked += MapClicked;
+            Map.MapLongClicked += (sender, args) => { Console.WriteLine(args); };
+
             Fly.Clicked += (sender, args) => { Map.MoveToRegion(new MapSpan(_center, _extent.width, _extent.height)); };
+        }
+
+        private void MapClicked(object sender, MapClickedEventArgs args)
+        {
+            var pos = args.Point;
+
+            // find the nearest point in the polyline vertices
+            // this is right now not exactly the nearest point, but the nearest turning point in the polyline.
+            // to do this better, we could check out the implementation in this StackOverflow answer
+            // https://stackoverflow.com/questions/16429562/find-a-point-in-a-polyline-which-is-closest-to-a-latlng
+            var nearestPosTuple = _poly.Positions
+                .Select(((position, i) => new Tuple<double, int>(position.Distance(pos), i)))
+                .OrderBy((tuple => tuple.Item1))
+                .First();
+
+            var nearestPos = _poly.Positions[nearestPosTuple.Item2];
+            var distance = nearestPosTuple.Item1;
+
+            // only take the point if distance is less than a 100 meters away
+            if (distance >= 100)
+                return;
+
+            if (_start == -1 || _end != -1)
+            {
+                _start = nearestPosTuple.Item2;
+                _end = -1;
+            }
+            else
+            {
+                _end = nearestPosTuple.Item2;
+            }
+
+
+            var p = new Pin
+            {
+                Position = nearestPos,
+                Type = PinType.Place,
+                Label = "Start"
+            };
+            Map.Pins.Add(p);
         }
 
         /// <summary>

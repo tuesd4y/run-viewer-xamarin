@@ -10,7 +10,6 @@
         <!-- Place new controls here -->
         <googleMaps:Map
             x:Name="Map"
-
             InitialCameraUpdate="42, 13, 13, 30, 60"
             HorizontalOptions="Fill"
             VerticalOptions="FillAndExpand" />
