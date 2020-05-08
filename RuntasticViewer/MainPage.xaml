@@ -4,10 +4,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:RuntasticViewer"
              xmlns:googleMaps="clr-namespace:Xamarin.Forms.GoogleMaps;assembly=Xamarin.Forms.GoogleMaps"
+             xmlns:charts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
              x:Class="RuntasticViewer.MainPage">
 
-    <StackLayout>
-        <!-- Place new controls here -->
+    <StackLayout Margin="10">
+        <StackLayout Padding="0,30,0,0" Orientation="Horizontal" HorizontalOptions="Fill">
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label Text="Relative Height" HorizontalOptions="FillAndExpand"
+                       HorizontalTextAlignment="Center" />
+                <charts:ChartView x:Name="HeightChart" HeightRequest="200"
+                                  Margin="20"
+                                  BackgroundColor="Aqua" />
+            </StackLayout>
+            <StackLayout HorizontalOptions="FillAndExpand">
+                <Label Text="Relative Speed" HorizontalOptions="FillAndExpand"
+                       HorizontalTextAlignment="Center" />
+                <charts:ChartView x:Name="SpeedChart" HeightRequest="200"
+                                  Margin="20"
+                                  BackgroundColor="Aqua" />
+            </StackLayout>
+        </StackLayout>
         <googleMaps:Map
             x:Name="Map"
             InitialCameraUpdate="42, 13, 13, 30, 60"
@@ -22,7 +38,7 @@
             <Button x:Name="Fly"
                     Text="Fly to trace"
                     HorizontalOptions="CenterAndExpand"
-                    VerticalOptions="Center"></Button>
+                    VerticalOptions="Center" />
         </StackLayout>
 
     </StackLayout>
