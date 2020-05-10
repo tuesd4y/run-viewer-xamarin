@@ -33,6 +33,8 @@ namespace RuntasticViewer
         private int _start = -1;
         private int _end = -1;
 
+        private Queue<Pin> _pins = new Queue<Pin>();
+
         public MainPage()
         {
             BindingContext = this;
@@ -66,7 +68,6 @@ namespace RuntasticViewer
 
 
             Map.MapClicked += MapClicked;
-            Map.MapLongClicked += (sender, args) => { Console.WriteLine(args); };
 
             Fly.Clicked += (sender, args) => { Map.MoveToRegion(new MapSpan(_center, _extent.width, _extent.height)); };
 
@@ -185,8 +186,17 @@ namespace RuntasticViewer
             {
                 Position = nearestPos,
                 Type = PinType.Place,
-                Label = "Start"
+                Label = "Start",
+                Address = $"id: {nearestPosTuple.Item2}"
             };
+            
+            // check that only two pins are present at a given time: 
+            _pins.Enqueue(p);
+            if (_pins.Count > 2)
+            {
+                var toDelete = _pins.Dequeue();
+                Map.Pins.Remove(toDelete);
+            }
             Map.Pins.Add(p);
         }
 
