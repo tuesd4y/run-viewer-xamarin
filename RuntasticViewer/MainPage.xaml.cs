@@ -97,7 +97,7 @@ namespace RuntasticViewer
 
             var speedEntries = new List<Entry>();
 
-            var max = end > 50 ? selectedHeights.Count / 25.0 : 1.0;
+            var max = (end - start) > 50 ? selectedHeights.Count / 25.0 : 1.0;
             for (var i = 0; i + max < selectedHeights.Count; i = (int) (i + max))
             {
                 var heightSum = 0.0;
@@ -127,12 +127,14 @@ namespace RuntasticViewer
                 var endTime = _trace.Features[0].Properties.CoordTimes[(int) Math.Round(start + i + max)];
                 var time = endTime - startTime;
                 var speed = (float) (time.TotalMinutes / (distance / 1000));
-                
+
                 speedEntries.Add(new Entry(speed)
                 {
                     // value label should only be shown on every third item to not be too crowded
                     ValueLabel = i % 3 == 0 ? $"{speed:N1} m/km " : "",
-                    Color = speedEntries.Count > 0 ? (speed - speedEntries.First().Value > 0 ? SKColors.OrangeRed : SKColors.LimeGreen) : SKColors.LimeGreen
+                    Color = speedEntries.Count > 0
+                        ? (speed - speedEntries.First().Value > 0 ? SKColors.OrangeRed : SKColors.LimeGreen)
+                        : SKColors.LimeGreen
                 });
             }
 
@@ -171,15 +173,8 @@ namespace RuntasticViewer
             if (distance >= 100)
                 return;
 
-            if (_start == -1 || _end != -1)
-            {
-                _start = nearestPosTuple.Item2;
-                _end = -1;
-            }
-            else
-            {
-                _end = nearestPosTuple.Item2;
-            }
+            _end = _start;
+            _start = nearestPosTuple.Item2;
 
 
             var p = new Pin
@@ -189,7 +184,7 @@ namespace RuntasticViewer
                 Label = "Start",
                 Address = $"id: {nearestPosTuple.Item2}"
             };
-            
+
             // check that only two pins are present at a given time: 
             _pins.Enqueue(p);
             if (_pins.Count > 2)
@@ -197,7 +192,14 @@ namespace RuntasticViewer
                 var toDelete = _pins.Dequeue();
                 Map.Pins.Remove(toDelete);
             }
+
             Map.Pins.Add(p);
+
+            if (_pins.Count == 2)
+            {
+                // pins are set, now we can calculate the new chart
+                CalculateHeightChart(Math.Min(_start, _end), Math.Max(_start, _end));
+            }
         }
 
         /// <summary>
