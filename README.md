@@ -10,7 +10,7 @@ This Xamarin.Forms cross-platform application can be used to visualize running l
 As seen in the screenshot above, the application displays a given running track and charts according to the logged height and current speed over the whole running session. All this data is parsed and calculated from the exported files from _adidas Running_.
 Furthermore, by clicking the `fly to trace`-Button, the map will center back on the location of the trace if the screen has been moved beforehand.
 
-Currently, the application does not support dynamically loading JSON-files at run-time, so if you want to display a running trace different to the built-in one, you can easily download and convert your own trace by following the instructions here.
+Currently, the application does not support dynamically loading JSON-files at run-time, so if you want to display a running trace different to [the built-in one](https://github.com/tuesd4y/run-viewer-xamarin/blob/master/RuntasticViewer/Assets/Resources/defaultTrace.json), you can easily download and convert your own trace by following the instructions here.
 
 ## Displaying your own traces
 
@@ -25,7 +25,7 @@ Currently, the application does not support dynamically loading JSON-files at ru
 
 * Build the project in Visual Studio or Rider and deploy it to the device of your choice!
 
-There also is an automized version of all steps after downloading and extracting the data (except the build and deploy-step) in the file convert.sh.
+There also is an automized version of all steps after downloading and extracting the data (except the build and deploy-step) in the file [convert.sh](https://github.com/tuesd4y/run-viewer-xamarin/blob/master/convert.sh).
 
 This script has only been tested on macOs yet.
 
@@ -33,4 +33,3 @@ This script has only been tested on macOs yet.
 
 - why using xamarin is a good/bad idea
 - download links
-- Links to convert.sh and defaultTrace.json on GitHub
